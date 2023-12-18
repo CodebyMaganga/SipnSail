@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from db import local_session
-from typing import List
+from typing import List, Optional
 import models
 
 app = FastAPI()
@@ -23,18 +23,28 @@ db = local_session()
 def Home():
     return {"Code check one two"}
 
-@app.get('/products', response_model=List[Product], status_code=200)
+@app.get('/products', response_model=List[Product])
 def get_all_products():
-    items = db.query(models.Item).all()
+    items = db.query(models.Product).all()
     return items
 
 @app.get('/product/{item_id}')
 def get_product(item_id: int):
     return {"Code check one two"}
 
-@app.post('/products')
-def create_product():
-    return {"Code check one two"}
+@app.post('/products',response_model=Product)
+def create_product(product:Product):
+    new_item = models.Product(
+        name=product.name,
+        url=product.url,
+        price=product.price,
+        category=product.category,
+        on_offer=product.on_offer
+    )
+
+    db.add(new_item)
+    db.commit()
+    return new_item
 
 @app.patch('/products/{item_id}')
 def update_product(item_id:int, item:Product):

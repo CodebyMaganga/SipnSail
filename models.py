@@ -11,6 +11,7 @@ class Product(Base):
     url = Column(VARCHAR(), nullable=False)
     price = Column(String(), nullable=False)
     on_offer = Column(Boolean(), default=False)
+    category = Column(String())
 
 
     def __repr__(self):
