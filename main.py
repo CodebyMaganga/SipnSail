@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, status
 from pydantic import BaseModel
 from db import local_session
 from typing import List, Optional
@@ -28,9 +28,10 @@ def get_all_products():
     items = db.query(models.Product).all()
     return items
 
-@app.get('/product/{item_id}')
+@app.get('/product/{item_id}', response_model=Product)
 def get_product(item_id: int):
-    return {"Code check one two"}
+    item = db.query(models.Product).filter(models.Product.id == item_id).first()
+    return item
 
 @app.post('/products',response_model=Product)
 def create_product(product:Product):
@@ -46,14 +47,26 @@ def create_product(product:Product):
     db.commit()
     return new_item
 
-@app.patch('/products/{item_id}')
+@app.put('/products/{item_id}')
 def update_product(item_id:int, item:Product):
-    return {'name': item.name,
-            'price': item.price,
-            'category': item.category,
-            }
+    updated_item = db.query(models.Product).filter(models.Product.id == item_id).first()
+    updated_item.name = item.name
+    updated_item.price = item.price
+    updated_item.url = item.url
+    updated_item.on_offer = item.on_offer
+    updated_item.category = item.category
+
+    db.commit()
+
+    return updated_item
+
 
 @app.delete('/products/{item_id}')
 def delete_product(item_id: int):
-    return {"Code check one two"}
+    deleted_item = db.query(models.Product).filter(models.Item.id == item_id).first()
+
+    if deleted_item is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Resource not found")
+    
+    return deleted_item
 
