@@ -1,10 +1,13 @@
 from sqlalchemy import create_engine
-from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
 
 
 engine = create_engine(
-    'postgresql://admin:oQpfu6lfN0g6hBtOCjC6gwOBsxekjPRS@dpg-cluf91md3nmc7383oro0-a.frankfurt-postgres.render.com/grabbo'
+    'postgresql://admin:w2hM8G0hNZjSlYRyokDTfG7WpavszfEH@dpg-cm05b9ug1b2c73cn6arg-a.frankfurt-postgres.render.com/sipnsail',
+    echo=True
 )
 
-class Base(DeclarativeBase):
-    pass
+Base = declarative_base()
+
+local_session = sessionmaker(bind=engine)
