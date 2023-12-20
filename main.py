@@ -1,21 +1,21 @@
 from fastapi import FastAPI, HTTPException, status
-from pydantic import BaseModel
+from fastapi.middleware.cors import CORSMiddleware
 from db import local_session
-from typing import List, Optional
+from typing import List
 import models
+from schemas import Product
 
 app = FastAPI()
 
-class Product(BaseModel):
-    id:int
-    name:str
-    url:str
-    price: str
-    category: str
-    on_offer: bool
+origin = ['*']
 
-    class Config:
-        orm_mode = True
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origin,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 db = local_session()
 
@@ -63,10 +63,9 @@ def update_product(item_id:int, item:Product):
 
 @app.delete('/products/{item_id}')
 def delete_product(item_id: int):
-    deleted_item = db.query(models.Product).filter(models.Item.id == item_id).first()
+    deleted_item = db.query(models.Product).filter(models.Product.id == item_id).first()
 
     if deleted_item is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Resource not found")
     
     return deleted_item
-
