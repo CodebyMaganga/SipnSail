@@ -129,8 +129,8 @@ class User(Base):
     id = Column(Integer(), primary_key=True)
     first_name = Column(String(), nullable=False)
     last_name = Column(String(), nullable=False)
-    email = Column(String(), nullable=False)
-    address = Column(String())
+    email = Column(VARCHAR, nullable=False)
+    address = Column(VARCHAR)
     phone_number = Column(Integer())
     created_at = Column(TIMESTAMP)
 

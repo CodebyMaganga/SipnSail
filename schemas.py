@@ -46,5 +46,21 @@ class OrderDetail(BaseModel):
 
 class OrderItem(BaseModel):
     id: int
+    order_id: int
+    product_id: int
+    quantity: int
+    created_at:datetime
+    modified_at:datetime
+
+class User(BaseModel):
+    id: int
+    first_name: str
+    last_name: str
+    email: str
+    address: str
+    phone_number: int
+    created_at:datetime
+
+
 
 
